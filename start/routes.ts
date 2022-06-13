@@ -20,6 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
+import WalletCompanyTypeEnum from 'App/Enums/WalletCompanyTypeEnum'
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -32,3 +33,7 @@ Route.get('health', async ({ response }) => {
     ? response.ok(report)
     : response.badRequest(report)
 })
+
+Route.get('wallets', 'WalletsController.index')
+Route.post('wallets', 'WalletsController.store')
+Route.get('wallets/:id', 'WalletsController.show')
