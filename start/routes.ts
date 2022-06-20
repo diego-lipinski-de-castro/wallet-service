@@ -20,11 +20,6 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
-import WalletCompanyTypeEnum from 'App/Enums/WalletCompanyTypeEnum'
-
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
 
 Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
@@ -34,6 +29,12 @@ Route.get('health', async ({ response }) => {
     : response.badRequest(report)
 })
 
-Route.get('wallets', 'WalletsController.index')
+Route.post('webhooks', 'WebhooksController.index');
+
 Route.post('wallets', 'WalletsController.store')
 Route.get('wallets/:id', 'WalletsController.show')
+
+Route.post('customers', 'CustomersController.store')
+Route.get('customers/:id', 'CustomersController.show')
+
+Route.post('payments', 'PaymentsController.store')

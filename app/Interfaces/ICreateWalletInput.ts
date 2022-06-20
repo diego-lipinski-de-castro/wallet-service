@@ -9,7 +9,7 @@ export default interface ICreateWalletInput {
     mobilePhone: string,
     address: string,
     addressNumber: string,
-    complement: string,
+    complement?: string,
     province: string,
     postalCode: string,
 }

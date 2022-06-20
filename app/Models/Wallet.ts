@@ -1,12 +1,14 @@
-import { BaseModel, column, beforeCreate } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, column, beforeCreate, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
 import { DateTime } from "luxon";
 import { v4 } from 'uuid'
+import Key from "./Key";
 
 export default class Wallet extends BaseModel {
-    public static selfAssignPrimaryKey = true
-
     @column({ isPrimary: true })
-    public id: string;
+    public id: number;
+
+    @column()
+    public uuid: string;
 
     // ID on payment system
     @column()
@@ -18,9 +20,6 @@ export default class Wallet extends BaseModel {
     // access key to make future requests
     @column()
     public key: string;
-    
-    @column()
-    public pix: string;
 
     @column.dateTime({ autoCreate: true })
     public createdAt: DateTime
@@ -30,6 +29,9 @@ export default class Wallet extends BaseModel {
 
     @beforeCreate()
     public static assignUuid(wallet: Wallet) {
-        wallet.id = v4()
+        wallet.uuid = v4()
     }
+
+    @hasMany(() => Key)
+    public keys: HasMany<typeof Key>
 }

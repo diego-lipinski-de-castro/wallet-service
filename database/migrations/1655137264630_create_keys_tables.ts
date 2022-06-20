@@ -1,16 +1,22 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'wallets'
+  protected tableName = 'keys'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
-      table.uuid('uuid')
+      table.increments('id').primary();
+
+      table
+        .integer('wallet_id')
+        .unsigned()
+        .references('wallets.id')
+        .onDelete('CASCADE')
 
       table.string('reference').unique();
-      table.string('wallet').unique();
-      table.string('key').unique();
+      table.string('key');
+      table.text('base64')
+      table.text('payload')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

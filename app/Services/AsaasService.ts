@@ -2,13 +2,17 @@ import axios, { AxiosInstance } from 'axios'
 import Wallet from 'App/Models/Wallet'
 import IFindWalletResponse from 'App/Interfaces/IFindWalletResponse';
 import ICreateWalletInput from 'App/Interfaces/ICreateWalletInput';
-import IWalletService from 'App/Interfaces/IWalletService';
 import ICreateWalletResponse from 'App/Interfaces/ICreatewalletResponse';
 import Env from '@ioc:Adonis/Core/Env'
-import IResponse from 'App/Interfaces/IResponse';
 import ICreatePixResponse from 'App/Interfaces/ICreatePixResponse';
+import { ICreatePayment } from 'App/Interfaces/ICreatePayment';
+import { ICreatePaymentResponse } from 'App/Interfaces/ICreatePaymentResponse';
+import { ICreateCustomer } from 'App/Interfaces/ICreateCustomer';
+import { ICreateCustomerResponse } from 'App/Interfaces/ICreateCustomerResponse';
+import { ITransferResponse } from 'App/Interfaces/ITransferResponse';
+import { IWithdrawResponse } from 'App/Interfaces/IWithdrawResponse';
 
-export default class AsaasService implements IWalletService {
+export default class AsaasService {
     private http: AxiosInstance;
 
     constructor() {
@@ -33,30 +37,7 @@ export default class AsaasService implements IWalletService {
         })
     }
 
-    async listWallets(): Promise<IResponse<any>> {
-        try {
-            const response = await this.http({
-                method: 'GET',
-                url: 'api/v3/accounts',
-            })
-
-            return response.data;
-        } catch (error) {
-            if(error.response) {
-                return {
-                    status: error.response.status,
-                    data: error.response.data
-                };
-            }
-
-            return {
-                status: 500,
-                data: null,
-            };
-        }
-    }
-
-    async createWallet(walletData: ICreateWalletInput): Promise<IResponse<any>> {
+    async createWallet(walletData: ICreateWalletInput): Promise<any> {
         try {
 
             const walletResponse = await this.http({
@@ -78,65 +59,35 @@ export default class AsaasService implements IWalletService {
                 },
             })
 
-            const { id: pixId }: ICreatePixResponse = pixResponse.data
-
-            const wallet = await Wallet.create({
-                reference: id,
-                wallet: walletId,
-                key: apiKey,
-                pix: pixId,
-            });
+            const { id: pixId, key, qrCode }: ICreatePixResponse = pixResponse.data
 
             return {
-                status: 200,
-                data: {
-                    id: wallet.id
-                },
+                id,
+                walletId,
+                apiKey,
+                pixId,
+                key,
+                qrCode,
             }
         } catch (error) {
-            if(error.response) {
-                return {
-                    status: error.response.status,
-                    data: error.response.data
-                };
-            }
-
-            return {
-                status: 500,
-                data: null,
-            };
+            throw error
         }
     }
 
-    async findWallet(walletId: string): Promise<IResponse<any>> {
+    async findWallet(walletId: string): Promise<IFindWalletResponse> {
         try {
             const response = await this.http({
                 method: 'GET',
                 url: `api/v3/accounts?id=${walletId}`,
             })
 
-            const data: IFindWalletResponse = response.data
-
-            return {
-                status: 200,
-                data
-            };
+            return response.data
         } catch (error) {
-            if(error.response) {
-                return {
-                    status: error.response.status,
-                    data: error.response.data
-                };
-            }
-
-            return {
-                status: 500,
-                data: null,
-            };
+            throw error
         }
     }
 
-    async transfer(from: Wallet, to: Wallet, amount: number): Promise<IResponse<any>> {
+    async transfer(from: Wallet, to: Wallet, amount: number): Promise<ITransferResponse> {
         try {
             const response = await this.http({
                 method: 'POST',
@@ -152,21 +103,11 @@ export default class AsaasService implements IWalletService {
 
             return response.data;
         } catch (error) {
-            if(error.response) {
-                return {
-                    status: error.response.status,
-                    data: error.response.data
-                };
-            }
-
-            return {
-                status: 500,
-                data: null,
-            };
+            throw error
         }
     }
 
-    async getBalance(wallet: Wallet): Promise<IResponse<any>> {
+    async getBalance(wallet: Wallet): Promise<number> {
         try {
             const response = await this.http({
                 method: 'GET',
@@ -176,26 +117,13 @@ export default class AsaasService implements IWalletService {
                 },
             })
 
-            return {
-                status: 200,
-                data: response.data
-            };
+            return response.data.balance;
         } catch (error) {
-            if(error.response) {
-                return {
-                    status: error.response.status,
-                    data: error.response.data
-                };
-            }
-
-            return {
-                status: 500,
-                data: null,
-            };
+            throw error
         }
     }
 
-    async getTransactions(wallet: Wallet): Promise<IResponse<any>> {
+    async getTransactions(wallet: Wallet): Promise<any> {
         try {
             const response = await this.http({
                 method: 'GET',
@@ -207,17 +135,108 @@ export default class AsaasService implements IWalletService {
 
             return response.data;
         } catch (error) {
-            if(error.response) {
-                return {
-                    status: error.response.status,
-                    data: error.response.data
-                };
-            }
+            throw error
+        }
+    }
+
+    async getTransfers(wallet: Wallet): Promise<any> {
+        try {
+            const response = await this.http({
+                method: 'GET',
+                url: 'api/v3/transfers',
+                headers: {
+                    'access_token': `${wallet.key}`,
+                },
+            })
+
+            return response.data;
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async withdraw(fromWallet: Wallet, toPix: string, amount: number, description?: string): Promise<IWithdrawResponse> {
+        try {
+            const response = await this.http({
+                method: 'POST',
+                url: 'api/v3/transfers',
+                data: {
+                    pixAddressKey: toPix,
+                    value: amount,
+                    description,
+                },
+                headers: {
+                    'access_token': `${fromWallet.key}`,
+                },
+            })
+
+            return response.data;
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createPayment(paymentData: ICreatePayment): Promise<ICreatePaymentResponse> {
+        try {
+
+            const response = await this.http({
+                method: 'POST',
+                url: 'api/v3/payments',
+                data: paymentData,
+            })
+
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getPixForPayment(paymentId: string): Promise<any> {
+        try {
+
+            const response = await this.http({
+                method: 'GET',
+                url: `api/v3/payments/${paymentId}/pixQrCode`
+            })
+
+            const { encodedImage, payload } = response.data
 
             return {
-                status: 500,
-                data: null,
+                status: 200,
+                data: {
+                    encodedImage, payload
+                }
             };
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createCustomer(customerData: ICreateCustomer): Promise<ICreateCustomerResponse> {
+        try {
+
+            const response = await this.http({
+                method: 'POST',
+                url: 'api/v3/customers',
+                data: customerData,
+            })
+
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async findCustomer(customerId: string): Promise<ICreateCustomerResponse> {
+        try {
+            const response = await this.http({
+                method: 'GET',
+                url: `api/v3/customers/${customerId}`,
+            })
+
+            return response.data
+        } catch (error) {
+            throw error
         }
     }
 }
