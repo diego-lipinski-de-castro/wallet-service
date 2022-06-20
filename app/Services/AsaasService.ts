@@ -191,7 +191,7 @@ export default class AsaasService {
         }
     }
 
-    async getPixForPayment(paymentId: string): Promise<any> {
+    async getQrcode(paymentId: string): Promise<any> {
         try {
 
             const response = await this.http({

@@ -38,3 +38,4 @@ Route.post('customers', 'CustomersController.store')
 Route.get('customers/:id', 'CustomersController.show')
 
 Route.post('payments', 'PaymentsController.store')
+Route.get('payments/:id/qrcode', 'PaymentsController.qrcode')

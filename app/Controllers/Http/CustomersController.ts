@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
 import Customer from 'App/Models/Customer';
+import { validate as validateUuid } from 'uuid'
 
 export default class CustomersController {
 
@@ -43,7 +44,12 @@ export default class CustomersController {
     }
   }
 
-  public async show({ params }: HttpContextContract) {
+  public async show({ params, response }: HttpContextContract) {
+
+    if(!validateUuid(params?.id)) {
+      response.status(422)
+      return 
+    }
 
     const customer = await Customer.findByOrFail('uuid', params?.id);
 
