@@ -15,7 +15,20 @@ export interface IPaymentWebhook {
   description: string
   externalReference: string
   billingType: string
-  status: string
+  status:
+    | "PENDING"
+    | "CONFIRMED"
+    | "RECEIVED"
+    | "RECEIVED_IN_CASH"
+    | "OVERDUE"
+    | "REFUND_REQUESTED"
+    | "REFUNDED"
+    | "CHARGEBACK_REQUESTED"
+    | "CHARGEBACK_DISPUTE"
+    | "AWAITING_CHARGEBACK_REVERSAL"
+    | "DUNNING_REQUESTED"
+    | "DUNNING_RECEIVED"
+    | "AWAITING_RISK_ANALYSIS"
   confirmedDate: string
   paymentDate: string
   clientPaymentDate: string

@@ -11,6 +11,8 @@ import { ICreateCustomer } from 'App/Interfaces/ICreateCustomer';
 import { ICreateCustomerResponse } from 'App/Interfaces/ICreateCustomerResponse';
 import { ITransferResponse } from 'App/Interfaces/ITransferResponse';
 import { IWithdrawResponse } from 'App/Interfaces/IWithdrawResponse';
+import { DateTime } from 'luxon'
+import Event from '@ioc:Adonis/Core/Event'
 
 export default class AsaasService {
     private http: AxiosInstance;
@@ -25,14 +27,48 @@ export default class AsaasService {
         })
 
         this.http.interceptors.request.use(config => {
+
+            Event.emit('proxies:request', {
+                type: 'request',
+                method: config.method,
+                url: config.url,
+                body: config.data,
+                headers: config.headers,
+                status: null,
+                created_at: DateTime.now(),
+            })
+
             return config;
-        }, error => {
+        },  error => {
+            Event.emit('proxies:request:error', {
+                tag: 'axios.request.error',
+                info: error,
+                created_at: DateTime.now(),
+            })
+
             throw error
         })
 
-        this.http.interceptors.response.use(response => {
+        this.http.interceptors.response.use( response => {
+
+            Event.emit('proxies:response', {
+                type: 'response',
+                method: response.config.method,
+                url: response.config.url,
+                body: response.data,
+                headers: response.headers,
+                status: response.status,
+                created_at: DateTime.now(),
+            })
+
             return response;
-        }, error => {
+        },  error => {
+             Event.emit('proxies:response:error', {
+                tag: 'axios.response.error',
+                info: error,
+                created_at: DateTime.now(),
+            })
+
             throw error
         })
     }
@@ -87,6 +123,7 @@ export default class AsaasService {
         }
     }
 
+    // amount: 1000 = R$ 1000
     async transfer(from: Wallet, to: Wallet, amount: number): Promise<ITransferResponse> {
         try {
             const response = await this.http({
@@ -98,6 +135,28 @@ export default class AsaasService {
                 },
                 headers: {
                     'access_token': `${from.key}`,
+                },
+            })
+
+            return response.data;
+        } catch (error) {
+            throw error
+        }
+    }
+
+    // amount: 1000 = R$ 1000
+    async withdraw(fromWallet: Wallet, toPix: string, amount: number, description?: string): Promise<IWithdrawResponse> {
+        try {
+            const response = await this.http({
+                method: 'POST',
+                url: 'api/v3/transfers',
+                data: {
+                    pixAddressKey: toPix,
+                    value: amount,
+                    description,
+                },
+                headers: {
+                    'access_token': `${fromWallet.key}`,
                 },
             })
 
@@ -155,27 +214,8 @@ export default class AsaasService {
         }
     }
 
-    async withdraw(fromWallet: Wallet, toPix: string, amount: number, description?: string): Promise<IWithdrawResponse> {
-        try {
-            const response = await this.http({
-                method: 'POST',
-                url: 'api/v3/transfers',
-                data: {
-                    pixAddressKey: toPix,
-                    value: amount,
-                    description,
-                },
-                headers: {
-                    'access_token': `${fromWallet.key}`,
-                },
-            })
-
-            return response.data;
-        } catch (error) {
-            throw error
-        }
-    }
-
+    // value: 1000 = R$ 10,00
+    // value: 10050 = R$ 100,50
     async createPayment(paymentData: ICreatePayment): Promise<ICreatePaymentResponse> {
         try {
 
@@ -202,10 +242,7 @@ export default class AsaasService {
             const { encodedImage, payload } = response.data
 
             return {
-                status: 200,
-                data: {
-                    encodedImage, payload
-                }
+                encodedImage, payload
             };
         } catch (error) {
             throw error

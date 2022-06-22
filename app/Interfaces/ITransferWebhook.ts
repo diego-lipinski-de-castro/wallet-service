@@ -11,10 +11,15 @@ export interface ITransferWebhook {
   scheduleDate: string
   authorized: boolean
   failReason: any
-  transactionReceiptUrl: any
-  bankAccount: BankAccount
+  transactionReceiptUrl?: string
+  bankAccount?: BankAccount
   operationType: string
-  description: any
+  description?: string
+  walletId?: string
+  account?: {
+    name: string
+    cpfCnpj: string
+  }
 }
 
 export interface BankAccount {

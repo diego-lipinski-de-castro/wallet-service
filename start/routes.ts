@@ -33,6 +33,8 @@ Route.post('webhooks', 'WebhooksController.index');
 
 Route.post('wallets', 'WalletsController.store')
 Route.get('wallets/:id', 'WalletsController.show')
+Route.get('wallets/:id/balance', 'WalletsController.balance')
+Route.get('wallets/:id/qrcode', 'WalletsController.qrcode')
 
 Route.post('customers', 'CustomersController.store')
 Route.get('customers/:id', 'CustomersController.show')

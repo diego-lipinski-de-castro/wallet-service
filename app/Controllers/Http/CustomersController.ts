@@ -25,14 +25,20 @@ export default class CustomersController {
     const asaasService = new AsaasService();
 
     try {
-      const result = await asaasService.createCustomer(payload);
+      const result = await asaasService.createCustomer({
+        ...payload,
+        notificationDisabled: true,
+      });
 
       const customer = await Customer.create({
         reference: result.id
       })
 
       response.status(200)
-      return customer
+      
+      return {
+        customer: customer.uuid,
+      }
     } catch (error) {
       if(error.response) {
         response.status(error.response.status)

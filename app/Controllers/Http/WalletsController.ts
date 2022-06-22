@@ -12,14 +12,14 @@ export default class WalletsController {
       name: schema.string(),
       email: schema.string(),
       cpfCnpj: schema.string(),
-      companyType: schema.enum(Object.values(WalletCompanyTypeEnum)),
+      companyType: schema.enum.optional(Object.values(WalletCompanyTypeEnum)),
       phone: schema.string(),
-      mobilePhone: schema.string(),
-      address: schema.string(),
-      addressNumber: schema.string(),
+      mobilePhone: schema.string.optional(),
+      address: schema.string.optional(),
+      addressNumber: schema.string.optional(),
       complement: schema.string.optional(),
-      province: schema.string(),
-      postalCode: schema.string(),
+      province: schema.string.optional(),
+      postalCode: schema.string.optional(),
     })
 
     const payload = await request.validate({ schema: createWalletSchema })
@@ -71,6 +71,57 @@ export default class WalletsController {
     const wallet = await Wallet.findByOrFail('uuid', params?.id);
 
     return wallet;
+  }
+
+  public async balance({ response, params }: HttpContextContract) {
+
+    if(!validateUuid(params?.id)) {
+      response.status(422)
+      return 
+    }
+
+    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+
+    const { default: AsaasService } = await import('App/Services/AsaasService');
+
+    const asaasService = new AsaasService();
+
+    try {
+      const result = await asaasService.getBalance(wallet);
+
+      response.status(200)
+
+      return {
+        balance: result
+      }
+    } catch (error) {
+      if(error.response) {
+        response.status(error.response.status)
+        return error.response.data
+      }
+
+      response.status(500)
+      return null
+    }
+  }
+
+  public async qrcode({ response, params }: HttpContextContract) {
+
+    if(!validateUuid(params?.id)) {
+      response.status(422)
+      return 
+    }
+
+    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+
+    await wallet.load('keys')
+
+    const key = wallet.keys[0]
+
+    return {
+      encodedImage: key.base64,
+      payload: key.payload,
+    }
   }
 
   public async transfer({}: HttpContextContract) {}

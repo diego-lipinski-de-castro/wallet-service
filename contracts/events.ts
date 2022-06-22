@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon'
+
 /**
  * Contract source: https://git.io/JfefG
  *
@@ -25,5 +27,34 @@ declare module '@ioc:Adonis/Core/Event' {
   | an instance of the the UserModel only.
   |
   */
-  interface EventsList {}
+  interface EventsList {
+    'proxies:request': {
+      type?: string,
+      method?: string,
+      url?: string,
+      body?: any,
+      headers?: any,
+      status?: number|null,
+      created_at: DateTime,
+    },
+    'proxies:response': {
+      type?: string,
+      method?: string,
+      url?: string,
+      body?: any,
+      headers?: any,
+      status?: number|null,
+      created_at: DateTime,
+    },
+    'proxies:request:error': {
+      tag: string,
+      info: any,
+      created_at: DateTime,
+    },
+    'proxies:response:error': {
+      tag: string,
+      info: any,
+      created_at: DateTime,
+    },
+  }
 }
