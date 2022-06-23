@@ -5,7 +5,6 @@ import Transfer from 'App/Models/Transfer';
 import Wallet from 'App/Models/Wallet';
 import { validate as validateUuid } from 'uuid'
 import { DateTime } from 'luxon'
-import Event from '@ioc:Adonis/Core/Event'
 
 export default class WalletsController {
 
