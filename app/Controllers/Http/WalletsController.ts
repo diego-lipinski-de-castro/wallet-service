@@ -1,8 +1,10 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
 import WalletCompanyTypeEnum from 'App/Enums/WalletCompanyTypeEnum';
+import Transfer from 'App/Models/Transfer';
 import Wallet from 'App/Models/Wallet';
 import { validate as validateUuid } from 'uuid'
+import { DateTime } from 'luxon'
 
 export default class WalletsController {
 
@@ -124,5 +126,53 @@ export default class WalletsController {
     }
   }
 
-  public async transfer({}: HttpContextContract) {}
+  public async transfer({ request, response }: HttpContextContract) {
+
+    const createWalletSchema = schema.create({
+      from: schema.string(),
+      to: schema.string(),
+      amount: schema.number(),
+    })
+
+    const payload = await request.validate({ schema: createWalletSchema })
+
+    if(!validateUuid(payload.from) || !validateUuid(payload.to)) {
+      response.status(422)
+      return 
+    }
+
+    const fromWallet = await Wallet.findByOrFail('uuid', payload.from);
+    const toWallet = await Wallet.findByOrFail('uuid', payload.to);
+
+    const { default: AsaasService } = await import('App/Services/AsaasService');
+
+    const asaasService = new AsaasService();
+
+    try {
+      const result = await asaasService.transfer(fromWallet, toWallet, payload.amount);
+
+      const transfer = await Transfer.create({
+        fromId: fromWallet.id,
+        toId: toWallet.id,
+        reference: result.id,
+        value: result.value,
+        status: result.status,
+        requestedAt: result.dateCreated == null ? null : DateTime.fromFormat(result.dateCreated, 'Y-m-d'),
+        effectiveAt: result.effectiveDate == null ? null : DateTime.fromFormat(result.effectiveDate, 'Y-m-d'),
+        scheduledAt: result.scheduleDate == null ? null : DateTime.fromFormat(result.scheduleDate, 'Y-m-d'),
+      })
+
+      response.status(200)
+
+      return transfer
+    } catch (error) {
+      if(error.response) {
+        response.status(error.response.status)
+        return error.response.data
+      }
+
+      response.status(500)
+      return null
+    }
+  }
 }
