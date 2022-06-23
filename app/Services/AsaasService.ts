@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios'
 import Wallet from 'App/Models/Wallet'
 import IFindWalletResponse from 'App/Interfaces/IFindWalletResponse';
 import ICreateWalletInput from 'App/Interfaces/ICreateWalletInput';
-import ICreateWalletResponse from 'App/Interfaces/ICreatewalletResponse';
 import Env from '@ioc:Adonis/Core/Env'
 import ICreatePixResponse from 'App/Interfaces/ICreatePixResponse';
 import { ICreatePayment } from 'App/Interfaces/ICreatePayment';
@@ -13,6 +12,7 @@ import { ITransferResponse } from 'App/Interfaces/ITransferResponse';
 import { IWithdrawResponse } from 'App/Interfaces/IWithdrawResponse';
 import { DateTime } from 'luxon'
 import Event from '@ioc:Adonis/Core/Event'
+import ICreateWalletResponse from 'App/Interfaces/ICreateWalletResponse';
 
 export default class AsaasService {
     private http: AxiosInstance;
