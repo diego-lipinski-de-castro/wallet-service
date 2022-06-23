@@ -56,5 +56,10 @@ declare module '@ioc:Adonis/Core/Event' {
       info: any,
       created_at: DateTime,
     },
+    'controllers:error' : {
+      tag: string,
+      info: any,
+      created_at: DateTime,
+    },
   }
 }

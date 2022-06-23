@@ -5,6 +5,7 @@ import Transfer from 'App/Models/Transfer';
 import Wallet from 'App/Models/Wallet';
 import { validate as validateUuid } from 'uuid'
 import { DateTime } from 'luxon'
+import Event from '@ioc:Adonis/Core/Event'
 
 export default class WalletsController {
 
@@ -157,9 +158,9 @@ export default class WalletsController {
         reference: result.id,
         value: result.value,
         status: result.status,
-        requestedAt: result.dateCreated == null ? null : DateTime.fromFormat(result.dateCreated, 'Y-m-d'),
-        effectiveAt: result.effectiveDate == null ? null : DateTime.fromFormat(result.effectiveDate, 'Y-m-d'),
-        scheduledAt: result.scheduleDate == null ? null : DateTime.fromFormat(result.scheduleDate, 'Y-m-d'),
+        requestedAt: result.dateCreated == null ? null : DateTime.fromISO(result.dateCreated),
+        effectiveAt: result.effectiveDate == null ? null : DateTime.fromISO(result.effectiveDate),
+        scheduledAt: result.scheduleDate == null ? null : DateTime.fromISO(result.scheduleDate),
       })
 
       response.status(200)

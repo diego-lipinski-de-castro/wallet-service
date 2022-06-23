@@ -54,3 +54,10 @@ Event.on('proxies:response:error', async (data) => {
         .table('errors')
         .insert(data)
 })
+
+Event.on('controllers:error', async (data) => {
+    await Database
+        .insertQuery()
+        .table('errors')
+        .insert(data)
+})

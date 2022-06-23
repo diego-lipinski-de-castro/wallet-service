@@ -4,6 +4,7 @@ import { ITransferWebhook } from 'App/Interfaces/ITransferWebhook';
 import Payment from 'App/Models/Payment';
 import Database from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
+import Transfer from 'App/Models/Transfer';
 
 export default class WebhooksController {
     public async index({ request, response }: HttpContextContract) {
@@ -65,6 +66,10 @@ export default class WebhooksController {
     }
 
     private async handleTransfer(data: ITransferWebhook) {
+
+        const transfer = await Transfer.findByOrFail('reference', data.id);
+
+        console.log(transfer);
         
     }
 }
