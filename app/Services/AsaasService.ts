@@ -182,11 +182,11 @@ export default class AsaasService {
         }
     }
 
-    async getTransactions(wallet: Wallet): Promise<any> {
+    async getTransactions(wallet: Wallet, offset: number = 0): Promise<any> {
         try {
             const response = await this.http({
                 method: 'GET',
-                url: 'api/v3/financialTransactions',
+                url: `api/v3/financialTransactions?limit=50&offset=${offset}`,
                 headers: {
                     'access_token': `${wallet.key}`,
                 },

@@ -58,18 +58,22 @@ export default class WebhooksController {
     }
 
     private async handlePayment(data: IPaymentWebhook) {
-        const payment = await Payment.findByOrFail('reference', data.id);
+        const payment = await Payment.findBy('reference', data.id)
 
-        payment.status = data.status;
-
-        await payment.save();
+        if(payment) {
+            payment.status = data.status
+            await payment.save()
+            return
+        }
     }
 
     private async handleTransfer(data: ITransferWebhook) {
+        const transfer = await Transfer.findBy('reference', data.id)
 
-        const transfer = await Transfer.findByOrFail('reference', data.id);
-
-        console.log(transfer);
-        
+        if(transfer) {
+            transfer.status = data.status
+            await transfer.save()
+            return
+        }
     }
 }

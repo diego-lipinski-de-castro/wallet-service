@@ -126,6 +126,58 @@ export default class WalletsController {
     }
   }
 
+  public async transactions({ request, params, response }: HttpContextContract) {
+
+    if(!validateUuid(params?.id)) {
+      response.status(422)
+      return 
+    }
+
+    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+
+    const { default: AsaasService } = await import('App/Services/AsaasService');
+
+    const asaasService = new AsaasService();
+
+    try {
+      const result = await asaasService.getTransactions(wallet, request.qs()?.offset ?? 0);
+
+      response.status(200)
+
+      const formatter = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      });
+    
+      const data = result.data.map(trx => {
+        return {
+          value: trx.value,
+          balance: trx.balance,
+          value_formatted: formatter.format(trx.value),
+          balance_formatted: formatter.format(trx.balance),
+          date: DateTime.fromISO(trx.date).toFormat('dd/MM/yyyy'),
+          description: trx.description,
+        }
+      })
+
+      return {
+        hasMore: result.hasMore,
+        totalCount: result.totalCount,
+        limit: result.limit,
+        offset: result.offset,
+        data: data
+      };
+    } catch (error) {
+      if(error.response) {
+        response.status(error.response.status)
+        return error.response.data
+      }
+
+      response.status(500)
+      return null
+    }
+  }
+
   public async transfer({ request, response }: HttpContextContract) {
 
     const createWalletSchema = schema.create({

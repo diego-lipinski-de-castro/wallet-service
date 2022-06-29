@@ -29,12 +29,13 @@ Route.get('health', async ({ response }) => {
     : response.badRequest(report)
 })
 
-Route.post('webhooks', 'WebhooksController.index');
+Route.post('webhooks', 'WebhooksController.index')
 
 Route.post('wallets', 'WalletsController.store')
 Route.get('wallets/:id', 'WalletsController.show')
 Route.get('wallets/:id/balance', 'WalletsController.balance')
 Route.get('wallets/:id/qrcode', 'WalletsController.qrcode')
+Route.get('wallets/:id/transactions', 'WalletsController.transactions')
 Route.post('wallets/transfer', 'WalletsController.transfer')
 
 Route.post('customers', 'CustomersController.store')

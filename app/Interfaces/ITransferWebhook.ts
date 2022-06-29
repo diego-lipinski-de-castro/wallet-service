@@ -2,7 +2,10 @@ export interface ITransferWebhook {
   object: string
   id: string
   dateCreated: string
-  status: string
+  status:
+    | "DONE"
+    | "PENDING"
+    | "CANCELLED"
   effectiveDate: any
   type: string
   value: number
