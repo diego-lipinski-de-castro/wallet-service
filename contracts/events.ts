@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 /**
  * Contract source: https://git.io/JfefG
  *
@@ -35,7 +33,7 @@ declare module '@ioc:Adonis/Core/Event' {
       body?: any,
       headers?: any,
       status?: number|null,
-      created_at: DateTime,
+      created_at: string,
     },
     'proxies:response': {
       type?: string,
@@ -44,22 +42,22 @@ declare module '@ioc:Adonis/Core/Event' {
       body?: any,
       headers?: any,
       status?: number|null,
-      created_at: DateTime,
+      created_at: string,
     },
     'proxies:request:error': {
       tag: string,
       info: any,
-      created_at: DateTime,
+      created_at: string,
     },
     'proxies:response:error': {
       tag: string,
       info: any,
-      created_at: DateTime,
+      created_at: string,
     },
     'controllers:error' : {
       tag: string,
       info: any,
-      created_at: DateTime,
+      created_at: string,
     },
   }
 }

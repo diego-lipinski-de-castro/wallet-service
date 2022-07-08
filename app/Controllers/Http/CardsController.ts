@@ -23,6 +23,13 @@ export default class CardsController {
 
         const customer = await Customer.findByOrFail('uuid', params?.id);
 
+        await customer.load('cards')
+
+        if(customer.cards.length > 0) {
+            response.status(422)
+            return
+        }
+
         const { default: AsaasService } = await import('App/Services/AsaasService')
 
         const asaasService = new AsaasService()
@@ -63,6 +70,6 @@ export default class CardsController {
 
         await customer.load('cards')
 
-        return customer.cards;
+        return customer.cards[0];
     }
 }

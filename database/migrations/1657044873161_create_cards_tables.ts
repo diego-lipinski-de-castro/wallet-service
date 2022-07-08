@@ -14,9 +14,9 @@ export default class extends BaseSchema {
         .references('customers.id')
         .onDelete('CASCADE')
 
-      table.string('number');
-      table.string('brand');
-      table.string('token').unique();
+      table.string('number')
+      table.string('brand')
+      table.string('token').unique().notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

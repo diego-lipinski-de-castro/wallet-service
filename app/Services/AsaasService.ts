@@ -38,7 +38,7 @@ export default class AsaasService {
                 body: config.data,
                 headers: config.headers,
                 status: null,
-                created_at: DateTime.now(),
+                created_at: DateTime.now().toISO(),
             })
 
             return config;
@@ -46,7 +46,7 @@ export default class AsaasService {
             Event.emit('proxies:request:error', {
                 tag: 'axios.request.error',
                 info: error,
-                created_at: DateTime.now(),
+                created_at: DateTime.now().toISO(),
             })
 
             throw error
@@ -61,7 +61,7 @@ export default class AsaasService {
                 body: response.data,
                 headers: response.headers,
                 status: response.status,
-                created_at: DateTime.now(),
+                created_at: DateTime.now().toISO(),
             })
 
             return response;
@@ -69,7 +69,7 @@ export default class AsaasService {
              Event.emit('proxies:response:error', {
                 tag: 'axios.response.error',
                 info: error,
-                created_at: DateTime.now(),
+                created_at: DateTime.now().toISO(),
             })
 
             throw error

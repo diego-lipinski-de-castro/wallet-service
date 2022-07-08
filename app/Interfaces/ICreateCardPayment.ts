@@ -32,24 +32,24 @@ export interface ICreateCardPayment {
     }
     postalService?: boolean
     split?: SplitWallet[]
-    creditCard?: {
-      holderName: string
-      number: string
-      expiryMonth: string
-      expiryYear: string
-      ccv: string
-    }
-    creditCardHolderInfo?: {
-      name: string
-      email: string
-      cpfCnpj: string
-      postalCode: string
-      addressNumber: string
-      addressComplement?: string
-      phone: string
-      mobilePhone?: string
-    }
-    creditCardToken?: string
+    // creditCard?: {
+    //   holderName: string
+    //   number: string
+    //   expiryMonth: string
+    //   expiryYear: string
+    //   ccv: string
+    // }
+    // creditCardHolderInfo?: {
+    //   name: string
+    //   email: string
+    //   cpfCnpj: string
+    //   postalCode: string
+    //   addressNumber: string
+    //   addressComplement?: string
+    //   phone: string
+    //   mobilePhone?: string
+    // }
+    creditCardToken: string
     remoteIp: string
   }
   
