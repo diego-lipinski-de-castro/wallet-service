@@ -13,6 +13,9 @@ import { IWithdrawResponse } from 'App/Interfaces/IWithdrawResponse';
 import { DateTime } from 'luxon'
 import Event from '@ioc:Adonis/Core/Event'
 import ICreateWalletResponse from 'App/Interfaces/ICreateWalletResponse';
+import { ICreateCardPayment } from 'App/Interfaces/ICreateCardPayment';
+import { ICreateCard } from 'App/Interfaces/ICreateCard';
+import { ICreateCardResponse } from 'App/Interfaces/ICreateCardResponse';
 
 export default class AsaasService {
     private http: AxiosInstance;
@@ -231,6 +234,23 @@ export default class AsaasService {
         }
     }
 
+    // value: 1000 = R$ 10,00
+    // value: 10050 = R$ 100,50
+    async createCardPayment(paymentData: ICreateCardPayment): Promise<ICreatePaymentResponse> {
+        try {
+
+            const response = await this.http({
+                method: 'POST',
+                url: 'api/v3/payments',
+                data: paymentData,
+            })
+
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getQrcode(paymentId: string): Promise<any> {
         try {
 
@@ -269,6 +289,20 @@ export default class AsaasService {
             const response = await this.http({
                 method: 'GET',
                 url: `api/v3/customers/${customerId}`,
+            })
+
+            return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async tokenizeCard(cardData: ICreateCard): Promise<ICreateCardResponse> {
+        try {
+            const response = await this.http({
+                method: 'POST',
+                url: 'api/v3/creditCard/tokenizeCreditCard',
+                data: cardData,
             })
 
             return response.data

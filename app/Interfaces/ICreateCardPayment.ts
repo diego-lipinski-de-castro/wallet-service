@@ -1,8 +1,7 @@
 import { DateTime } from "luxon"
 
 export enum BillingTypeEnum {
-  BOLETO = 'BOLETO',
-  PIX = 'PIX' ,
+  CREDIT_CARD = 'CREDIT_CARD',
 }
 
 interface SplitWallet {
@@ -11,7 +10,7 @@ interface SplitWallet {
   percentualValue?: number
 }
 
-export interface ICreatePayment {
+export interface ICreateCardPayment {
     customer: string
     billingType: BillingTypeEnum
     value: number
@@ -33,5 +32,24 @@ export interface ICreatePayment {
     }
     postalService?: boolean
     split?: SplitWallet[]
+    creditCard?: {
+      holderName: string
+      number: string
+      expiryMonth: string
+      expiryYear: string
+      ccv: string
+    }
+    creditCardHolderInfo?: {
+      name: string
+      email: string
+      cpfCnpj: string
+      postalCode: string
+      addressNumber: string
+      addressComplement?: string
+      phone: string
+      mobilePhone?: string
+    }
+    creditCardToken?: string
+    remoteIp: string
   }
   

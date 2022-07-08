@@ -12,7 +12,7 @@ export default class LogRequest {
         method: request.method(),
         url: request.url(),
         json: request.toJSON(),
-        created_at: DateTime.now(),
+        created_at: DateTime.now().toISO(),
       })
     
     await next()

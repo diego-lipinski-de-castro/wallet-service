@@ -40,6 +40,8 @@ Route.post('wallets/transfer', 'WalletsController.transfer')
 
 Route.post('customers', 'CustomersController.store')
 Route.get('customers/:id', 'CustomersController.show')
+Route.post('customers/:id/cards', 'CardsController.store')
+Route.get('customers/:id/cards', 'CardsController.show')
 
 Route.post('payments', 'PaymentsController.store')
 Route.get('payments/:id/qrcode', 'PaymentsController.qrcode')

@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, beforeCreate, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import { v4 } from 'uuid'
 import Payment from './Payment';
+import Card from './Card';
 
 export default class Customer extends BaseModel {
   @column({ isPrimary: true })
@@ -27,4 +28,7 @@ export default class Customer extends BaseModel {
 
   @hasMany(() => Payment)
   public payments: HasMany<typeof Payment>
+
+  @hasMany(() => Card)
+  public cards: HasMany<typeof Card>
 }

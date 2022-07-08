@@ -1,20 +1,28 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'requests'
+  protected tableName = 'cards'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
+      table.uuid('uuid').notNullable()
 
-      table.string('method')
-      table.string('url')
-      table.jsonb('json')
+      table
+        .integer('customer_id')
+        .unsigned()
+        .references('customers.id')
+        .onDelete('CASCADE')
+
+      table.string('number');
+      table.string('brand');
+      table.string('token').unique();
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
       table.timestamp('created_at', { useTz: true })
+      table.timestamp('updated_at', { useTz: true })
     })
   }
 
