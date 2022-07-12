@@ -284,7 +284,7 @@ export default class AsaasService {
         }
     }
 
-    async findCustomer(customerId: string): Promise<ICreateCustomerResponse> {
+    async findCustomer(customerId: string): Promise<any> {
         try {
             const response = await this.http({
                 method: 'GET',
@@ -292,6 +292,19 @@ export default class AsaasService {
             })
 
             return response.data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async existsCustomerByCpfCnpj(cpfCnpj: string): Promise<any> {
+        try {
+            const response = await this.http({
+                method: 'GET',
+                url: `api/v3/customers?cpfCnpj=${cpfCnpj}`,
+            })
+
+            return response.data.data.length > 0
         } catch (error) {
             throw error
         }

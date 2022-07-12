@@ -25,6 +25,14 @@ export default class CustomersController {
     const asaasService = new AsaasService();
 
     try {
+
+      const exists = await asaasService.existsCustomerByCpfCnpj(payload.cpfCnpj);
+
+      if(exists) {
+        response.status(422)
+        return
+      }
+
       const result = await asaasService.createCustomer({
         ...payload,
         notificationDisabled: true,

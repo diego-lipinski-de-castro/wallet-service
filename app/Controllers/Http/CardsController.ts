@@ -70,6 +70,11 @@ export default class CardsController {
 
         await customer.load('cards')
 
+        if(customer.cards.length == 0)  {
+            response.status(404)
+            return null
+        }
+
         return customer.cards[0];
     }
 }
