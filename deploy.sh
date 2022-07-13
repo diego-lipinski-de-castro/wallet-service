@@ -1,0 +1,1 @@
+npm run build && cp .env build/.env && cd build && npm install --production && cd ../

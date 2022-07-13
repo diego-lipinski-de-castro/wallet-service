@@ -29,5 +29,4 @@ export default Env.rules({
   MYSQL_DB_NAME: Env.schema.string(),
   ASAAS_URL: Env.schema.string({ format: 'url' }),
   ASAAS_TOKEN: Env.schema.string(),
-  MP_TOKEN: Env.schema.string(),
 })

@@ -99,7 +99,7 @@ export default class PaymentsController {
         customer: customer.reference,
         creditCardToken: card.token,
       });
-  
+
       const payment = customer.related('payments').create({
         reference: result.id,
         value: result.value,
