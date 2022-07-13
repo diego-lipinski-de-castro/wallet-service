@@ -297,19 +297,6 @@ export default class AsaasService {
         }
     }
 
-    async existsCustomerByCpfCnpj(cpfCnpj: string): Promise<any> {
-        try {
-            const response = await this.http({
-                method: 'GET',
-                url: `api/v3/customers?cpfCnpj=${cpfCnpj}`,
-            })
-
-            return response.data.data.length > 0
-        } catch (error) {
-            throw error
-        }
-    }
-
     async tokenizeCard(cardData: ICreateCard): Promise<ICreateCardResponse> {
         try {
             const response = await this.http({

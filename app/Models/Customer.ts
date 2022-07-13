@@ -15,6 +15,9 @@ export default class Customer extends BaseModel {
   @column()
   public reference: string;
 
+  @column()
+  public cpfCnpj: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

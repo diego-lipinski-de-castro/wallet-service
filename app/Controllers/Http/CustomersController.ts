@@ -25,22 +25,19 @@ export default class CustomersController {
     const asaasService = new AsaasService();
 
     try {
+      let customer = await Customer.findBy('cpfCnpj', payload.cpfCnpj);
 
-      const exists = await asaasService.existsCustomerByCpfCnpj(payload.cpfCnpj);
-
-      if(exists) {
-        response.status(422)
-        return
+      if(!customer) {
+        const result = await asaasService.createCustomer({
+          ...payload,
+          notificationDisabled: true,
+        });
+  
+        customer = await Customer.create({
+          reference: result.id,
+          cpfCnpj: result.cpfCnpj,
+        })
       }
-
-      const result = await asaasService.createCustomer({
-        ...payload,
-        notificationDisabled: true,
-      });
-
-      const customer = await Customer.create({
-        reference: result.id
-      })
 
       response.status(200)
       
