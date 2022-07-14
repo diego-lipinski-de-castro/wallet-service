@@ -15,19 +15,23 @@ export default class extends BaseSchema {
         'DONE',
         'PENDING',
         'CANCELLED',
+        'BANK_PROCESSING',
+        'FAILED',
       ])
 
       table
         .integer('from_id')
         .unsigned()
         .references('wallets.id')
-        .onDelete('CASCADE')
+        .nullable()
+        .onDelete('SET NULL')
 
       table
         .integer('to_id')
         .unsigned()
         .references('wallets.id')
-        .onDelete('CASCADE')
+        .nullable()
+        .onDelete('SET NULL')
 
       table.date('requested_at').nullable();
       table.date('effective_at').nullable();

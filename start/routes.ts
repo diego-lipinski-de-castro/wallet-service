@@ -36,6 +36,7 @@ Route.get('wallets/:id', 'WalletsController.show')
 Route.get('wallets/:id/balance', 'WalletsController.balance')
 Route.get('wallets/:id/qrcode', 'WalletsController.qrcode')
 Route.get('wallets/:id/transactions', 'WalletsController.transactions')
+Route.post('wallets/:id/withdraw', 'WalletsController.withdraw')
 Route.post('wallets/transfer', 'WalletsController.transfer')
 
 Route.post('customers', 'CustomersController.store')

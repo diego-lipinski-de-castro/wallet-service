@@ -64,7 +64,6 @@ export default class WalletsController {
   }
 
   public async show({ response, params }: HttpContextContract) {
-
     if(!validateUuid(params?.id)) {
       response.status(422)
       return 
@@ -206,6 +205,55 @@ export default class WalletsController {
       const transfer = await Transfer.create({
         fromId: fromWallet.id,
         toId: toWallet.id,
+        reference: result.id,
+        value: result.value,
+        status: result.status,
+        requestedAt: result.dateCreated == null ? null : DateTime.fromISO(result.dateCreated),
+        effectiveAt: result.effectiveDate == null ? null : DateTime.fromISO(result.effectiveDate),
+        scheduledAt: result.scheduleDate == null ? null : DateTime.fromISO(result.scheduleDate),
+      })
+
+      response.status(200)
+
+      return transfer
+    } catch (error) {
+      if(error.response) {
+        response.status(error.response.status)
+        return error.response.data
+      }
+
+      response.status(500)
+      return null
+    }
+  }
+
+  public async withdraw({ params, request, response }: HttpContextContract) {
+    
+    const withdrawSchema = schema.create({
+      pix: schema.string(),
+      amount: schema.number(),
+      description: schema.string.optional(),
+    })
+
+    const payload = await request.validate({ schema: withdrawSchema })
+
+    if(!validateUuid(params?.id)) {
+      response.status(422)
+      return 
+    }
+
+    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+
+    const { default: AsaasService } = await import('App/Services/AsaasService');
+
+    const asaasService = new AsaasService();
+
+    try {
+      const result = await asaasService.withdraw(wallet, payload.pix, payload.amount, payload.description);
+
+      const transfer = await Transfer.create({
+        fromId: wallet.id,
+        // toId: toWallet.id,
         reference: result.id,
         value: result.value,
         status: result.status,

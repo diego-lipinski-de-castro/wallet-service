@@ -22,6 +22,8 @@ export default class Transfer extends BaseModel {
     | "DONE"
     | "PENDING"
     | "CANCELLED"
+    | "BANK_PROCESSING"
+    | "FAILED"
 
   @column()
   public fromId: number

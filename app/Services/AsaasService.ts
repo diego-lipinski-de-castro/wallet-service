@@ -45,7 +45,7 @@ export default class AsaasService {
         },  error => {
             Event.emit('proxies:request:error', {
                 tag: 'axios.request.error',
-                info: error,
+                info: `${error}`,
                 created_at: DateTime.now().toISO(),
             })
 
@@ -68,7 +68,7 @@ export default class AsaasService {
         },  error => {
              Event.emit('proxies:response:error', {
                 tag: 'axios.response.error',
-                info: error,
+                info: `${error}`,
                 created_at: DateTime.now().toISO(),
             })
 

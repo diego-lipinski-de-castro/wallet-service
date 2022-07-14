@@ -16,7 +16,7 @@ export default class WebhooksController {
             .insert({
                 event: event,
                 payload: request.body(),
-                created_at: DateTime.now(),
+                created_at: DateTime.now().toISO(),
             })
 
         switch (event) {
