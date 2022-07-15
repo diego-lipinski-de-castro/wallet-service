@@ -1,11 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
+import Card from 'App/Models/Card'
 import Customer from 'App/Models/Customer'
+import { DateTime } from 'luxon'
 import { validate as validateUuid } from 'uuid'
 
 export default class CardsController {
     public async store({ params, request, response }: HttpContextContract) {
-        
         const createCardSchema = schema.create({
             creditCardHolderName: schema.string(),
             creditCardNumber: schema.string(),
@@ -16,16 +17,19 @@ export default class CardsController {
 
         const payload = await request.validate({ schema: createCardSchema })
 
-        if(!validateUuid(params?.id)) {
+        if (!validateUuid(params?.id)) {
             response.status(422)
             return
         }
 
-        const customer = await Customer.findByOrFail('uuid', params?.id);
+        const customer = await Customer.findByOrFail('uuid', params?.id)
 
-        await customer.load('cards')
+        const card = await Card.query()
+            .where('customer_id', customer.id)
+            .whereNull('deleted_at')
+            .first()
 
-        if(customer.cards.length > 0) {
+        if (card) {
             response.status(422)
             return
         }
@@ -38,7 +42,7 @@ export default class CardsController {
             const result = await asaasService.tokenizeCard({
                 ...payload,
                 customer: customer.reference,
-            });
+            })
 
             const card = customer.related('cards').create({
                 number: result.creditCardNumber,
@@ -60,21 +64,45 @@ export default class CardsController {
     }
 
     public async show({ params, response }: HttpContextContract) {
-
-        if(!validateUuid(params?.id)) {
-          response.status(422)
-          return 
+        if (!validateUuid(params?.id)) {
+            response.status(422)
+            return
         }
-    
-        const customer = await Customer.findByOrFail('uuid', params?.id);
 
-        await customer.load('cards')
+        const customer = await Customer.findByOrFail('uuid', params?.id)
 
-        if(customer.cards.length == 0)  {
+        const card = await Card.query()
+            .where('customer_id', customer.id)
+            .whereNull('deleted_at')
+            .first()
+
+        if (!card) {
             response.status(404)
-            return null
+            return
         }
 
-        return customer.cards[0];
+        return card
+    }
+
+    public async destroy({ params, response }: HttpContextContract) {
+        if (!validateUuid(params?.id)) {
+            response.status(422)
+            return
+        }
+
+        if (!validateUuid(params?.card)) {
+            response.status(422)
+            return
+        }
+
+        const customer = await Customer.findByOrFail('uuid', params?.id)
+
+        const card = await Card.query()
+            .where('customer_id', customer.id)
+            .where('uuid', params?.card)
+            .firstOrFail()
+
+        card.deletedAt = DateTime.now();
+        card.save();
     }
 }

@@ -28,6 +28,9 @@ export default class Card extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
+  @column.dateTime()
+  public deletedAt: DateTime
+
   @belongsTo(() => Customer)
   public customer: BelongsTo<typeof Customer>
 

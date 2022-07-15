@@ -43,6 +43,7 @@ Route.post('customers', 'CustomersController.store')
 Route.get('customers/:id', 'CustomersController.show')
 Route.post('customers/:id/cards', 'CardsController.store')
 Route.get('customers/:id/cards', 'CardsController.show')
+Route.delete('customers/:id/cards/:card', 'CardsController.destroy')
 
 Route.post('payments', 'PaymentsController.store')
 Route.get('payments/:id/qrcode', 'PaymentsController.qrcode')
