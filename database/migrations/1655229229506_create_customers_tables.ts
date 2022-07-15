@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.uuid('uuid').notNullable()
 
       table.string('reference').unique().notNullable();
-      table.string('cpfCnpj').unique().notNullable();
+      table.string('cpf_cnpj').unique().notNullable();
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

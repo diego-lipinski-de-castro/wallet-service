@@ -51,7 +51,7 @@ export default class CustomersController {
       }
 
       response.status(500)
-      return null
+      return error
     }
   }
 
