@@ -18,6 +18,9 @@ export default class Transfer extends BaseModel {
   public value: number
 
   @column()
+  public description: string
+
+  @column()
   public status: 
     | "DONE"
     | "PENDING"
@@ -30,6 +33,9 @@ export default class Transfer extends BaseModel {
 
   @column()
   public toId: number
+
+  @column()
+  public toPix: string
 
   @column.date()
   public requestedAt: DateTime|null

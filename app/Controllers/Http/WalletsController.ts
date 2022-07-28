@@ -31,19 +31,21 @@ export default class WalletsController {
     const asaasService = new AsaasService();
 
     try {
-      const result = await asaasService.createWallet(payload);
+      const walletResult = await asaasService.createWallet(payload);
 
       const wallet = await Wallet.create({
-          reference: result.id,
-          wallet: result.walletId,
-          key: result.apiKey,
+          reference: walletResult.id,
+          wallet: walletResult.walletId,
+          key: walletResult.apiKey,
       })
 
+      const pixResult = await asaasService.createPixKey(wallet);
+
       await wallet.related('keys').create({
-          reference: result.pixId,
-          key: result.key,
-          base64: result.qrCode.encodedImage,
-          payload: result.qrCode.payload,
+          reference: pixResult.pixId,
+          key: pixResult.key,
+          base64: pixResult.qrCode.encodedImage,
+          payload: pixResult.qrCode.payload,
       })
 
       response.status(200)
@@ -253,10 +255,11 @@ export default class WalletsController {
 
       const transfer = await Transfer.create({
         fromId: wallet.id,
-        // toId: toWallet.id,
         reference: result.id,
         value: result.value,
+        description: payload.description,
         status: result.status,
+        toPix: payload.pix,
         requestedAt: result.dateCreated == null ? null : DateTime.fromISO(result.dateCreated),
         effectiveAt: result.effectiveDate == null ? null : DateTime.fromISO(result.effectiveDate),
         scheduledAt: result.scheduleDate == null ? null : DateTime.fromISO(result.scheduleDate),

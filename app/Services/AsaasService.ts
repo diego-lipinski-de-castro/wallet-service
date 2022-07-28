@@ -23,7 +23,7 @@ export default class AsaasService {
     constructor() {
         this.http = axios.create({
             baseURL: Env.get('ASAAS_URL'),
-            timeout: 10000,
+            timeout: 20000,
             headers: {
                 'access_token': Env.get('ASAAS_TOKEN'),
             },
@@ -87,11 +87,23 @@ export default class AsaasService {
 
             const { id, walletId, apiKey }: ICreateWalletResponse = walletResponse.data;
 
+            return {
+                id,
+                walletId,
+                apiKey,
+            }
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createPixKey(wallet: Wallet): Promise<any> {
+        try {
             const pixResponse = await this.http({
                 method: 'POST',
                 url: 'api/v3/pix/addressKeys',
                 headers: {
-                    'access_token': apiKey,
+                    'access_token': wallet.key,
                 },
                 data: {
                     type: 'EVP',
@@ -101,9 +113,6 @@ export default class AsaasService {
             const { id: pixId, key, qrCode }: ICreatePixResponse = pixResponse.data
 
             return {
-                id,
-                walletId,
-                apiKey,
                 pixId,
                 key,
                 qrCode,

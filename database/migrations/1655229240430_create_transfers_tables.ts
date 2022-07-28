@@ -10,6 +10,7 @@ export default class extends BaseSchema {
 
       table.string('reference').unique().notNullable()
       table.integer('value')
+      table.text('description').nullable()
 
       table.enum('status', [
         'DONE',
@@ -32,6 +33,8 @@ export default class extends BaseSchema {
         .references('wallets.id')
         .nullable()
         .onDelete('SET NULL')
+
+      table.string('to_pix').nullable();
 
       table.date('requested_at').nullable();
       table.date('effective_at').nullable();
