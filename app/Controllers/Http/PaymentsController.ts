@@ -33,6 +33,7 @@ export default class PaymentsController {
         format: 'yyyy-MM-dd',
       }),
       value: schema.number(),
+      description: schema.string.optional(),
     })
 
     const payload = await request.validate({ schema: createPaymentSchema })
@@ -90,6 +91,7 @@ export default class PaymentsController {
       remoteIp: schema.string({}, [
         rules.ip(),
       ]),
+      description: schema.string.optional(),
     })
 
     const payload = await request.validate({ schema: createPaymentSchema })
