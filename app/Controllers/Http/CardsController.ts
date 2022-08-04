@@ -18,11 +18,22 @@ export default class CardsController {
         const payload = await request.validate({ schema: createCardSchema })
 
         if (!validateUuid(params?.id)) {
-            response.status(422)
-            return
+            response.status(404)
+            
+            return {
+                message: 'Cliente não encontrado.',
+            }
         }
 
-        const customer = await Customer.findByOrFail('uuid', params?.id)
+        const customer = await Customer.findBy('uuid', params?.id)
+
+        if(!customer) {
+            response.status(404)
+
+            return {
+                message: 'Cliente não encontrado.',
+            }
+        }
 
         const card = await Card.query()
             .where('customer_id', customer.id)
@@ -31,7 +42,10 @@ export default class CardsController {
 
         if (card) {
             response.status(422)
-            return
+
+            return {
+                message: 'Cliente já possui um cartão cadastrado.',
+            }
         }
 
         const { default: AsaasService } = await import('App/Services/AsaasService')
@@ -65,11 +79,22 @@ export default class CardsController {
 
     public async show({ params, response }: HttpContextContract) {
         if (!validateUuid(params?.id)) {
-            response.status(422)
-            return
+            response.status(404);
+
+            return {
+                message: 'Cliente não encontrado.',
+            }
         }
 
-        const customer = await Customer.findByOrFail('uuid', params?.id)
+        const customer = await Customer.findBy('uuid', params?.id)
+
+        if(!customer) {
+            response.status(404)
+
+            return {
+                message: 'Cliente não encontrado.',
+            }
+        }
 
         const card = await Card.query()
             .where('customer_id', customer.id)
@@ -78,7 +103,10 @@ export default class CardsController {
 
         if (!card) {
             response.status(404)
-            return
+            
+            return {
+                message: 'Nenhum cartão encontrado.',
+            }
         }
 
         return card
@@ -86,21 +114,43 @@ export default class CardsController {
 
     public async destroy({ params, response }: HttpContextContract) {
         if (!validateUuid(params?.id)) {
-            response.status(422)
-            return
+            response.status(404)
+            
+            return {
+                message: 'Cliente não encontrado.',
+            }
         }
 
         if (!validateUuid(params?.card)) {
-            response.status(422)
-            return
+            response.status(404)
+            
+            return {
+                message: 'Cartão não encontrado.',
+            }
         }
 
-        const customer = await Customer.findByOrFail('uuid', params?.id)
+        const customer = await Customer.findBy('uuid', params?.id)
+
+        if(!customer) {
+            response.status(404)
+
+            return {
+                message: 'Cliente não encontrado.',
+            }
+        }
 
         const card = await Card.query()
             .where('customer_id', customer.id)
             .where('uuid', params?.card)
-            .firstOrFail()
+            .first()
+
+        if (!card) {
+            response.status(404)
+            
+            return {
+                message: 'Cartão não encontrado.',
+            }
+        }
 
         card.deletedAt = DateTime.now();
         card.save();

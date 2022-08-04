@@ -37,7 +37,15 @@ export default class PaymentsController {
 
     const payload = await request.validate({ schema: createPaymentSchema })
 
-    const customer = await Customer.findByOrFail('uuid', payload.customer);
+    const customer = await Customer.findBy('uuid', payload.customer);
+
+    if(!customer) {
+      response.status(404)
+
+      return {
+          message: 'Cliente não encontrado.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 
@@ -86,8 +94,29 @@ export default class PaymentsController {
 
     const payload = await request.validate({ schema: createPaymentSchema })
 
-    const customer = await Customer.findByOrFail('uuid', payload.customer);
-    const card = await Card.findByOrFail('uuid', payload.card);
+    const customer = await Customer.findBy('uuid', payload.customer);
+
+    if(!customer) {
+      response.status(404)
+
+      return {
+          message: 'Cliente não encontrado.',
+      }
+    }
+
+    const card = await Card.query()
+            .where('customer_id', customer.id)
+            .where('uuid', payload.card)
+            .whereNull('deleted_at')
+            .first()
+
+    if(!card) {
+      response.status(404)
+
+      return {
+          message: 'Cartão não encontrado.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 
@@ -123,11 +152,22 @@ export default class PaymentsController {
   public async qrcode({ params, response }: HttpContextContract) {
 
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Pagamento não encontrado.',
+      }
     }
 
-    const payment = await Payment.findByOrFail('uuid', params?.id);
+    const payment = await Payment.findBy('uuid', params?.id);
+
+    if(!payment) {
+      response.status(404)
+
+      return {
+          message: 'Pagamento não encontrado.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 

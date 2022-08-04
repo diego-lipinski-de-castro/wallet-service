@@ -67,11 +67,22 @@ export default class WalletsController {
 
   public async show({ response, params }: HttpContextContract) {
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
     }
 
-    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id);
+
+    if(!wallet) {
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
+    }
 
     return wallet;
   }
@@ -79,11 +90,22 @@ export default class WalletsController {
   public async balance({ response, params }: HttpContextContract) {
 
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
     }
 
-    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id);
+
+    if(!wallet) {
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 
@@ -111,11 +133,22 @@ export default class WalletsController {
   public async qrcode({ response, params }: HttpContextContract) {
 
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
     }
 
-    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id);
+
+    if(!wallet) {
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
+    }
 
     await wallet.load('keys')
 
@@ -130,11 +163,22 @@ export default class WalletsController {
   public async transactions({ request, params, response }: HttpContextContract) {
 
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
     }
 
-    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id);
+
+    if(!wallet) {
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 
@@ -190,12 +234,23 @@ export default class WalletsController {
     const payload = await request.validate({ schema: createWalletSchema })
 
     if(!validateUuid(payload.from) || !validateUuid(payload.to)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Não foi possível encontrar uma das carteiras informadas.',
+      }
     }
 
-    const fromWallet = await Wallet.findByOrFail('uuid', payload.from);
-    const toWallet = await Wallet.findByOrFail('uuid', payload.to);
+    const fromWallet = await Wallet.findBy('uuid', payload.from);
+    const toWallet = await Wallet.findBy('uuid', payload.to);
+
+    if(!fromWallet || !toWallet) {
+      response.status(404)
+
+      return {
+          message: 'Não foi possível encontrar uma das carteiras informadas.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 
@@ -240,11 +295,22 @@ export default class WalletsController {
     const payload = await request.validate({ schema: withdrawSchema })
 
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
     }
 
-    const wallet = await Wallet.findByOrFail('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id);
+
+    if(!wallet) {
+      response.status(404)
+
+      return {
+          message: 'Carteira não encontrada.',
+      }
+    }
 
     const { default: AsaasService } = await import('App/Services/AsaasService');
 

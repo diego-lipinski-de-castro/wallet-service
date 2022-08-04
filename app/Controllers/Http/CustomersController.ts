@@ -58,11 +58,22 @@ export default class CustomersController {
   public async show({ params, response }: HttpContextContract) {
 
     if(!validateUuid(params?.id)) {
-      response.status(422)
-      return 
+      response.status(404)
+
+      return {
+          message: 'Cliente não encontrado.',
+      }
     }
 
-    const customer = await Customer.findByOrFail('uuid', params?.id);
+    const customer = await Customer.findBy('uuid', params?.id);
+
+    if(!customer) {
+      response.status(404)
+
+      return {
+          message: 'Cliente não encontrado.',
+      }
+    }
 
     return customer;
   }
