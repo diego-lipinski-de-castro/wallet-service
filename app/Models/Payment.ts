@@ -8,7 +8,7 @@ export default class Payment extends BaseModel {
   public id: number
 
   @column()
-  public uuid: string;
+  public uuid: string
 
   @column()
   public customerId: number
@@ -16,25 +16,25 @@ export default class Payment extends BaseModel {
   // ID on payment system
   @column()
   public reference: string
-  
+
   @column()
   public value: number
 
   @column()
-  public status: 
-    | "PENDING"
-    | "CONFIRMED"
-    | "RECEIVED"
-    | "RECEIVED_IN_CASH"
-    | "OVERDUE"
-    | "REFUND_REQUESTED"
-    | "REFUNDED"
-    | "CHARGEBACK_REQUESTED"
-    | "CHARGEBACK_DISPUTE"
-    | "AWAITING_CHARGEBACK_REVERSAL"
-    | "DUNNING_REQUESTED"
-    | "DUNNING_RECEIVED"
-    | "AWAITING_RISK_ANALYSIS"
+  public status:
+    | 'PENDING'
+    | 'CONFIRMED'
+    | 'RECEIVED'
+    | 'RECEIVED_IN_CASH'
+    | 'OVERDUE'
+    | 'REFUND_REQUESTED'
+    | 'REFUNDED'
+    | 'CHARGEBACK_REQUESTED'
+    | 'CHARGEBACK_DISPUTE'
+    | 'AWAITING_CHARGEBACK_REVERSAL'
+    | 'DUNNING_REQUESTED'
+    | 'DUNNING_RECEIVED'
+    | 'AWAITING_RISK_ANALYSIS'
 
   @column()
   public description: string

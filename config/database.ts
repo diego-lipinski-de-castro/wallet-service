@@ -49,8 +49,7 @@ const databaseConfig: DatabaseConfig = {
       healthCheck: true,
       debug: true,
     },
-
-  }
+  },
 }
 
 export default databaseConfig

@@ -11,16 +11,16 @@ export default class Card extends BaseModel {
   public customerId: number
 
   @column()
-  public uuid: string;
+  public uuid: string
 
   @column()
-  public number: string;
+  public number: string
 
   @column()
-  public brand: string;
+  public brand: string
 
   @column()
-  public token: string;
+  public token: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -36,6 +36,6 @@ export default class Card extends BaseModel {
 
   @beforeCreate()
   public static assignUuid(card: Card) {
-      card.uuid = v4()
+    card.uuid = v4()
   }
 }

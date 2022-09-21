@@ -27,37 +27,37 @@ declare module '@ioc:Adonis/Core/Event' {
   */
   interface EventsList {
     'proxies:request': {
-      type?: string,
-      method?: string,
-      url?: string,
-      body?: any,
-      headers?: any,
-      status?: number|null,
-      created_at: string,
-    },
+      type?: string
+      method?: string
+      url?: string
+      body?: any
+      headers?: any
+      status?: number | null
+      created_at: string
+    }
     'proxies:response': {
-      type?: string,
-      method?: string,
-      url?: string,
-      body?: any,
-      headers?: any,
-      status?: number|null,
-      created_at: string,
-    },
+      type?: string
+      method?: string
+      url?: string
+      body?: any
+      headers?: any
+      status?: number | null
+      created_at: string
+    }
     'proxies:request:error': {
-      tag: string,
-      info: any,
-      created_at: string,
-    },
+      tag: string
+      info: any
+      created_at: string
+    }
     'proxies:response:error': {
-      tag: string,
-      info: any,
-      created_at: string,
-    },
-    'controllers:error' : {
-      tag: string,
-      info: any,
-      created_at: string,
-    },
+      tag: string
+      info: any
+      created_at: string
+    }
+    'controllers:error': {
+      tag: string
+      info: any
+      created_at: string
+    }
   }
 }

@@ -1,6 +1,5 @@
-export interface ICreateCardResponse {
-    creditCardNumber: string
-    creditCardBrand: string
-    creditCardToken: string
-  }
-  
+export interface CreateCardResponse {
+  creditCardNumber: string
+  creditCardBrand: string
+  creditCardToken: string
+}

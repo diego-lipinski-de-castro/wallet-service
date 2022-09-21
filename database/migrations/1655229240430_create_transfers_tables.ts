@@ -3,7 +3,7 @@ import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 export default class extends BaseSchema {
   protected tableName = 'transfers'
 
-  public async up () {
+  public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table.uuid('uuid').notNullable()
@@ -11,34 +11,19 @@ export default class extends BaseSchema {
       table.string('reference').unique().notNullable()
       table.integer('value')
       table.text('description').nullable()
+      table.text('fail_reason').nullable()
 
-      table.enum('status', [
-        'DONE',
-        'PENDING',
-        'CANCELLED',
-        'BANK_PROCESSING',
-        'FAILED',
-      ])
+      table.enum('status', ['DONE', 'PENDING', 'CANCELLED', 'BANK_PROCESSING', 'FAILED'])
 
-      table
-        .integer('from_id')
-        .unsigned()
-        .references('wallets.id')
-        .nullable()
-        .onDelete('SET NULL')
+      table.integer('from_id').unsigned().references('wallets.id').nullable().onDelete('SET NULL')
 
-      table
-        .integer('to_id')
-        .unsigned()
-        .references('wallets.id')
-        .nullable()
-        .onDelete('SET NULL')
+      table.integer('to_id').unsigned().references('wallets.id').nullable().onDelete('SET NULL')
 
-      table.string('to_pix').nullable();
+      table.string('to_pix').nullable()
 
-      table.date('requested_at').nullable();
-      table.date('effective_at').nullable();
-      table.date('scheduled_at').nullable();
+      table.date('requested_at').nullable()
+      table.date('effective_at').nullable()
+      table.date('scheduled_at').nullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
@@ -48,7 +33,7 @@ export default class extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down() {
     this.schema.dropTable(this.tableName)
   }
 }

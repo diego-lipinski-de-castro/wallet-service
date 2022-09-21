@@ -1,8 +1,8 @@
-import { DateTime } from "luxon"
+import { DateTime } from 'luxon'
 
 export enum BillingTypeEnum {
   BOLETO = 'BOLETO',
-  PIX = 'PIX' ,
+  PIX = 'PIX',
 }
 
 interface SplitWallet {
@@ -11,27 +11,26 @@ interface SplitWallet {
   percentualValue?: number
 }
 
-export interface ICreatePayment {
-    customer: string
-    billingType: BillingTypeEnum
-    value: number
-    dueDate: DateTime
-    description?: string
-    externalReference?: string
-    installmentCount?: number
-    installmentValue?: number
-    discount?: {
-      value?: number
-      dueDateLimitDays?: number
-      type?: 'FIXED' | 'PERCENTAGE'
-    }
-    interest?: {
-      value?: number
-    }
-    fine?: {
-      value?: number
-    }
-    postalService?: boolean
-    split?: SplitWallet[]
+export interface CreatePayment {
+  customer: string
+  billingType: BillingTypeEnum
+  value: number
+  dueDate: DateTime
+  description?: string
+  externalReference?: string
+  installmentCount?: number
+  installmentValue?: number
+  discount?: {
+    value?: number
+    dueDateLimitDays?: number
+    type?: 'FIXED' | 'PERCENTAGE'
   }
-  
+  interest?: {
+    value?: number
+  }
+  fine?: {
+    value?: number
+  }
+  postalService?: boolean
+  split?: SplitWallet[]
+}

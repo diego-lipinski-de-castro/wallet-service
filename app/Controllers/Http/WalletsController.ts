@@ -1,15 +1,13 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
-import WalletCompanyTypeEnum from 'App/Enums/WalletCompanyTypeEnum';
-import Transfer from 'App/Models/Transfer';
-import Wallet from 'App/Models/Wallet';
+import WalletCompanyTypeEnum from 'App/Enums/WalletCompanyTypeEnum'
+import Transfer from 'App/Models/Transfer'
+import Wallet from 'App/Models/Wallet'
 import { validate as validateUuid } from 'uuid'
 import { DateTime } from 'luxon'
 
 export default class WalletsController {
-
   public async store({ request, response }: HttpContextContract) {
-
     const createWalletSchema = schema.create({
       name: schema.string(),
       email: schema.string(),
@@ -26,36 +24,35 @@ export default class WalletsController {
 
     const payload = await request.validate({ schema: createWalletSchema })
 
-    const { default: AsaasService } = await import('App/Services/AsaasService');
+    const { default: AsaasService } = await import('App/Services/AsaasService')
 
-    const asaasService = new AsaasService();
+    const asaasService = new AsaasService()
 
     try {
-      const walletResult = await asaasService.createWallet(payload);
+      const walletResult = await asaasService.createWallet(payload)
 
       const wallet = await Wallet.create({
-          reference: walletResult.id,
-          wallet: walletResult.walletId,
-          key: walletResult.apiKey,
+        reference: walletResult.id,
+        wallet: walletResult.walletId,
+        key: walletResult.apiKey,
       })
 
-      const pixResult = await asaasService.createPixKey(wallet);
+      const pixResult = await asaasService.createPixKey(wallet)
 
       await wallet.related('keys').create({
-          reference: pixResult.pixId,
-          key: pixResult.key,
-          base64: pixResult.qrCode.encodedImage,
-          payload: pixResult.qrCode.payload,
+        reference: pixResult.pixId,
+        key: pixResult.key,
+        base64: pixResult.qrCode.encodedImage,
+        payload: pixResult.qrCode.payload,
       })
 
       response.status(200)
 
       return {
-        wallet: wallet.uuid
+        wallet: wallet.uuid,
       }
-      
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         response.status(error.response.status)
         return error.response.data
       }
@@ -66,61 +63,60 @@ export default class WalletsController {
   }
 
   public async show({ response, params }: HttpContextContract) {
-    if(!validateUuid(params?.id)) {
+    if (!validateUuid(params?.id)) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const wallet = await Wallet.findBy('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id)
 
-    if(!wallet) {
+    if (!wallet) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    return wallet;
+    return wallet
   }
 
   public async balance({ response, params }: HttpContextContract) {
-
-    if(!validateUuid(params?.id)) {
+    if (!validateUuid(params?.id)) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const wallet = await Wallet.findBy('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id)
 
-    if(!wallet) {
+    if (!wallet) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const { default: AsaasService } = await import('App/Services/AsaasService');
+    const { default: AsaasService } = await import('App/Services/AsaasService')
 
-    const asaasService = new AsaasService();
+    const asaasService = new AsaasService()
 
     try {
-      const result = await asaasService.getBalance(wallet);
+      const result = await asaasService.getBalance(wallet)
 
       response.status(200)
 
       return {
-        balance: result
+        balance: result,
       }
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         response.status(error.response.status)
         return error.response.data
       }
@@ -131,22 +127,21 @@ export default class WalletsController {
   }
 
   public async qrcode({ response, params }: HttpContextContract) {
-
-    if(!validateUuid(params?.id)) {
+    if (!validateUuid(params?.id)) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const wallet = await Wallet.findBy('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id)
 
-    if(!wallet) {
+    if (!wallet) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
@@ -161,40 +156,39 @@ export default class WalletsController {
   }
 
   public async transactions({ request, params, response }: HttpContextContract) {
-
-    if(!validateUuid(params?.id)) {
+    if (!validateUuid(params?.id)) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const wallet = await Wallet.findBy('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id)
 
-    if(!wallet) {
+    if (!wallet) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const { default: AsaasService } = await import('App/Services/AsaasService');
+    const { default: AsaasService } = await import('App/Services/AsaasService')
 
-    const asaasService = new AsaasService();
+    const asaasService = new AsaasService()
 
     try {
-      const result = await asaasService.getTransactions(wallet, request.qs()?.offset ?? 0);
+      const result = await asaasService.getTransactions(wallet, request.qs()?.offset ?? 0)
 
       response.status(200)
 
       const formatter = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL',
-      });
-    
-      const data = result.data.map(trx => {
+      })
+
+      const data = result.data.map((trx) => {
         return {
           value: trx.value,
           balance: trx.balance,
@@ -210,10 +204,10 @@ export default class WalletsController {
         totalCount: result.totalCount,
         limit: result.limit,
         offset: result.offset,
-        data: data
-      };
+        data: data,
+      }
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         response.status(error.response.status)
         return error.response.data
       }
@@ -224,7 +218,6 @@ export default class WalletsController {
   }
 
   public async transfer({ request, response }: HttpContextContract) {
-
     const createWalletSchema = schema.create({
       from: schema.string(),
       to: schema.string(),
@@ -233,31 +226,31 @@ export default class WalletsController {
 
     const payload = await request.validate({ schema: createWalletSchema })
 
-    if(!validateUuid(payload.from) || !validateUuid(payload.to)) {
+    if (!validateUuid(payload.from) || !validateUuid(payload.to)) {
       response.status(404)
 
       return {
-          message: 'Não foi possível encontrar uma das carteiras informadas.',
+        message: 'Não foi possível encontrar uma das carteiras informadas.',
       }
     }
 
-    const fromWallet = await Wallet.findBy('uuid', payload.from);
-    const toWallet = await Wallet.findBy('uuid', payload.to);
+    const fromWallet = await Wallet.findBy('uuid', payload.from)
+    const toWallet = await Wallet.findBy('uuid', payload.to)
 
-    if(!fromWallet || !toWallet) {
+    if (!fromWallet || !toWallet) {
       response.status(404)
 
       return {
-          message: 'Não foi possível encontrar uma das carteiras informadas.',
+        message: 'Não foi possível encontrar uma das carteiras informadas.',
       }
     }
 
-    const { default: AsaasService } = await import('App/Services/AsaasService');
+    const { default: AsaasService } = await import('App/Services/AsaasService')
 
-    const asaasService = new AsaasService();
+    const asaasService = new AsaasService()
 
     try {
-      const result = await asaasService.transfer(fromWallet, toWallet, payload.amount);
+      const result = await asaasService.transfer(fromWallet, toWallet, payload.amount)
 
       const transfer = await Transfer.create({
         fromId: fromWallet.id,
@@ -274,7 +267,7 @@ export default class WalletsController {
 
       return transfer
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         response.status(error.response.status)
         return error.response.data
       }
@@ -285,7 +278,6 @@ export default class WalletsController {
   }
 
   public async withdraw({ params, request, response }: HttpContextContract) {
-    
     const withdrawSchema = schema.create({
       pix: schema.string(),
       amount: schema.number(),
@@ -294,30 +286,35 @@ export default class WalletsController {
 
     const payload = await request.validate({ schema: withdrawSchema })
 
-    if(!validateUuid(params?.id)) {
+    if (!validateUuid(params?.id)) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const wallet = await Wallet.findBy('uuid', params?.id);
+    const wallet = await Wallet.findBy('uuid', params?.id)
 
-    if(!wallet) {
+    if (!wallet) {
       response.status(404)
 
       return {
-          message: 'Carteira não encontrada.',
+        message: 'Carteira não encontrada.',
       }
     }
 
-    const { default: AsaasService } = await import('App/Services/AsaasService');
+    const { default: AsaasService } = await import('App/Services/AsaasService')
 
-    const asaasService = new AsaasService();
+    const asaasService = new AsaasService()
 
     try {
-      const result = await asaasService.withdraw(wallet, payload.pix, payload.amount, payload.description);
+      const result = await asaasService.withdraw(
+        wallet,
+        payload.pix,
+        payload.amount,
+        payload.description
+      )
 
       const transfer = await Transfer.create({
         fromId: wallet.id,
@@ -335,7 +332,7 @@ export default class WalletsController {
 
       return transfer
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         response.status(error.response.status)
         return error.response.data
       }

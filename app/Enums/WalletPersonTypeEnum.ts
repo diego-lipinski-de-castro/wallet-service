@@ -1,6 +1,6 @@
 enum WalletPersonTypeEnum {
-    FISICA = 'FISICA',
-    JURIDICA = 'JURIDICA',
+  FISICA = 'FISICA',
+  JURIDICA = 'JURIDICA',
 }
 
 export default WalletPersonTypeEnum

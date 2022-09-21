@@ -1,19 +1,19 @@
 import { DateTime } from 'luxon'
 import { BaseModel, beforeCreate, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import { v4 } from 'uuid'
-import Payment from './Payment';
-import Card from './Card';
+import Payment from './Payment'
+import Card from './Card'
 
 export default class Customer extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public uuid: string;
+  public uuid: string
 
   // ID on payment system
   @column()
-  public reference: string;
+  public reference: string
 
   @column()
   public cpfCnpj: string
@@ -26,7 +26,7 @@ export default class Customer extends BaseModel {
 
   @beforeCreate()
   public static assignUuid(customer: Customer) {
-      customer.uuid = v4()
+    customer.uuid = v4()
   }
 
   @hasMany(() => Payment)

@@ -1,9 +1,9 @@
-export interface IWithdrawResponse {
+export interface WithdrawResponse {
   id: string
   dateCreated?: string
   value?: number
   netValue?: number
-  status?: "PENDING" | "BANK_PROCESSING" | "DONE" | "CANCELLED" | "FAILED"
+  status?: 'PENDING' | 'BANK_PROCESSING' | 'DONE' | 'CANCELLED' | 'FAILED'
   transferFee?: number
   effectiveDate?: string
   scheduleDate?: string
@@ -24,7 +24,6 @@ export interface IWithdrawResponse {
     pixAddressKey?: string
   }
   transactionReceiptUrl?: string
-  operationType?: "PIX" | "TED" | "INTERNAL"
+  operationType?: 'PIX' | 'TED' | 'INTERNAL'
   description?: string
 }
-  

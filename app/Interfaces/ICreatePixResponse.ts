@@ -12,16 +12,16 @@ enum PixKeyStatus {
   AWAITING_DELETION = 'AWAITING_DELETION',
 }
 
-export default interface ICreatePixResponse {
-    id: string,
-    key: string,
-    type: PixKeyType,
-    status: PixKeyStatus,
-    dateCreated: Date,
-    canBeDeleted: boolean,
-    cannotBeDeletedReason: string|null,
-    qrCode: {
-      encodedImage: string,
-      payload: string
-    }
+export default interface CreatePixResponse {
+  id: string
+  key: string
+  type: PixKeyType
+  status: PixKeyStatus
+  dateCreated: Date
+  canBeDeleted: boolean
+  cannotBeDeletedReason: string | null
+  qrCode: {
+    encodedImage: string
+    payload: string
+  }
 }

@@ -24,20 +24,18 @@ import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 Route.get('health', async ({ response }) => {
   const report = await HealthCheck.getReport()
 
-  return report.healthy
-    ? response.ok(report)
-    : response.badRequest(report)
+  return report.healthy ? response.ok(report) : response.badRequest(report)
 })
 
 Route.post('webhooks', 'WebhooksController.index')
 
 Route.post('wallets', 'WalletsController.store')
+Route.post('wallets/transfer', 'WalletsController.transfer')
 Route.get('wallets/:id', 'WalletsController.show')
 Route.get('wallets/:id/balance', 'WalletsController.balance')
 Route.get('wallets/:id/qrcode', 'WalletsController.qrcode')
 Route.get('wallets/:id/transactions', 'WalletsController.transactions')
 Route.post('wallets/:id/withdraw', 'WalletsController.withdraw')
-Route.post('wallets/transfer', 'WalletsController.transfer')
 
 Route.post('customers', 'CustomersController.store')
 Route.get('customers/:id', 'CustomersController.show')

@@ -1,19 +1,19 @@
 import { DateTime } from 'luxon'
 import { BaseModel, beforeCreate, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import { v4 } from 'uuid'
-import Wallet from './Wallet';
+import Wallet from './Wallet'
 
 export default class Transfer extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public uuid: string;
+  public uuid: string
 
   // ID on payment system
   @column()
   public reference: string
-  
+
   @column()
   public value: number
 
@@ -21,12 +21,7 @@ export default class Transfer extends BaseModel {
   public description: string
 
   @column()
-  public status: 
-    | "DONE"
-    | "PENDING"
-    | "CANCELLED"
-    | "BANK_PROCESSING"
-    | "FAILED"
+  public status: 'DONE' | 'PENDING' | 'CANCELLED' | 'BANK_PROCESSING' | 'FAILED'
 
   @column()
   public fromId: number
@@ -38,13 +33,13 @@ export default class Transfer extends BaseModel {
   public toPix: string
 
   @column.date()
-  public requestedAt: DateTime|null
+  public requestedAt: DateTime | null
 
   @column.date()
-  public effectiveAt: DateTime|null
+  public effectiveAt: DateTime | null
 
   @column.date()
-  public scheduledAt: DateTime|null
+  public scheduledAt: DateTime | null
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

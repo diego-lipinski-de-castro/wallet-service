@@ -1,12 +1,10 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema } from '@ioc:Adonis/Core/Validator'
-import Customer from 'App/Models/Customer';
+import Customer from 'App/Models/Customer'
 import { validate as validateUuid } from 'uuid'
 
 export default class CustomersController {
-
   public async store({ request, response }: HttpContextContract) {
-
     const createCustomerSchema = schema.create({
       name: schema.string(),
       cpfCnpj: schema.string(),
@@ -20,19 +18,19 @@ export default class CustomersController {
 
     const payload = await request.validate({ schema: createCustomerSchema })
 
-    const { default: AsaasService } = await import('App/Services/AsaasService');
+    const { default: AsaasService } = await import('App/Services/AsaasService')
 
-    const asaasService = new AsaasService();
+    const asaasService = new AsaasService()
 
     try {
-      let customer = await Customer.findBy('cpfCnpj', payload.cpfCnpj);
+      let customer = await Customer.findBy('cpfCnpj', payload.cpfCnpj)
 
-      if(!customer) {
+      if (!customer) {
         const result = await asaasService.createCustomer({
           ...payload,
           notificationDisabled: true,
-        });
-  
+        })
+
         customer = await Customer.create({
           reference: result.id,
           cpfCnpj: result.cpfCnpj,
@@ -40,12 +38,12 @@ export default class CustomersController {
       }
 
       response.status(200)
-      
+
       return {
         customer: customer.uuid,
       }
     } catch (error) {
-      if(error.response) {
+      if (error.response) {
         response.status(error.response.status)
         return error.response.data
       }
@@ -56,25 +54,24 @@ export default class CustomersController {
   }
 
   public async show({ params, response }: HttpContextContract) {
-
-    if(!validateUuid(params?.id)) {
+    if (!validateUuid(params?.id)) {
       response.status(404)
 
       return {
-          message: 'Cliente não encontrado.',
+        message: 'Cliente não encontrado.',
       }
     }
 
-    const customer = await Customer.findBy('uuid', params?.id);
+    const customer = await Customer.findBy('uuid', params?.id)
 
-    if(!customer) {
+    if (!customer) {
       response.status(404)
 
       return {
-          message: 'Cliente não encontrado.',
+        message: 'Cliente não encontrado.',
       }
     }
 
-    return customer;
+    return customer
   }
 }
