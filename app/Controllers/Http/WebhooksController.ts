@@ -1,6 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { IPaymentWebhook } from 'App/Interfaces/IPaymentWebhook'
-import { ITransferWebhook } from 'App/Interfaces/ITransferWebhook'
+import { PaymentWebhook } from 'App/Interfaces/IPaymentWebhook'
+import { TransferWebhook } from 'App/Interfaces/ITransferWebhook'
 import Payment from 'App/Models/Payment'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
@@ -54,7 +54,7 @@ export default class WebhooksController {
     return
   }
 
-  private async handlePayment(data: IPaymentWebhook) {
+  private async handlePayment(data: PaymentWebhook) {
     const payment = await Payment.findBy('reference', data.id)
 
     if (payment) {
@@ -64,7 +64,7 @@ export default class WebhooksController {
     }
   }
 
-  private async handleTransfer(data: ITransferWebhook) {
+  private async handleTransfer(data: TransferWebhook) {
     const transfer = await Transfer.findBy('reference', data.id)
 
     if (transfer) {
