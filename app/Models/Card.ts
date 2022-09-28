@@ -29,7 +29,7 @@ export default class Card extends BaseModel {
   public updatedAt: DateTime
 
   @column.dateTime()
-  public deletedAt: DateTime
+  public deletedAt: DateTime | null
 
   @belongsTo(() => Customer)
   public customer: BelongsTo<typeof Customer>

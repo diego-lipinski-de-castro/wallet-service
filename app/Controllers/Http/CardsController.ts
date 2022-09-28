@@ -35,10 +35,7 @@ export default class CardsController {
       }
     }
 
-    const card = await Card.query()
-      .where('customer_id', customer.id)
-      .whereNull('deleted_at')
-      .first()
+    let card = await Card.query().where('customer_id', customer.id).whereNull('deleted_at').first()
 
     if (card) {
       response.status(422)
@@ -46,6 +43,18 @@ export default class CardsController {
       return {
         message: 'Cliente já possui um cartão cadastrado.',
       }
+    }
+
+    const number = payload.creditCardNumber.substring(payload.creditCardNumber.length - 4)
+
+    card = await Card.query().where('customer_id', customer.id).where('number', number).first()
+
+    if (card) {
+      card.deletedAt = null
+      card.save()
+
+      response.status(200)
+      return card
     }
 
     const { default: AsaasService } = await import('App/Services/AsaasService')
@@ -57,6 +66,8 @@ export default class CardsController {
         ...payload,
         customer: customer.reference,
       })
+
+      // check if token is unique
 
       const card = customer.related('cards').create({
         number: result.creditCardNumber,
@@ -99,6 +110,7 @@ export default class CardsController {
     const card = await Card.query()
       .where('customer_id', customer.id)
       .whereNull('deleted_at')
+      // .select('uuid', 'number', 'brand')
       .first()
 
     if (!card) {
@@ -142,6 +154,7 @@ export default class CardsController {
     const card = await Card.query()
       .where('customer_id', customer.id)
       .where('uuid', params?.card)
+      .whereNull('deleted_at')
       .first()
 
     if (!card) {
@@ -154,5 +167,7 @@ export default class CardsController {
 
     card.deletedAt = DateTime.now()
     card.save()
+
+    response.status(204)
   }
 }

@@ -258,9 +258,9 @@ export default class WalletsController {
         reference: result.id,
         value: result.value,
         status: result.status,
-        requestedAt: result.dateCreated == null ? null : DateTime.fromISO(result.dateCreated),
-        effectiveAt: result.effectiveDate == null ? null : DateTime.fromISO(result.effectiveDate),
-        scheduledAt: result.scheduleDate == null ? null : DateTime.fromISO(result.scheduleDate),
+        requestedAt: result.dateCreated === null ? null : DateTime.fromISO(result.dateCreated!),
+        effectiveAt: result.effectiveDate === null ? null : DateTime.fromISO(result.effectiveDate!),
+        scheduledAt: result.scheduleDate === null ? null : DateTime.fromISO(result.scheduleDate!),
       })
 
       response.status(200)
@@ -323,9 +323,9 @@ export default class WalletsController {
         description: payload.description,
         status: result.status,
         toPix: payload.pix,
-        requestedAt: result.dateCreated == null ? null : DateTime.fromISO(result.dateCreated),
-        effectiveAt: result.effectiveDate == null ? null : DateTime.fromISO(result.effectiveDate),
-        scheduledAt: result.scheduleDate == null ? null : DateTime.fromISO(result.scheduleDate),
+        requestedAt: result.dateCreated === null ? null : DateTime.fromISO(result.dateCreated!),
+        effectiveAt: result.effectiveDate === null ? null : DateTime.fromISO(result.effectiveDate!),
+        scheduledAt: result.scheduleDate === null ? null : DateTime.fromISO(result.scheduleDate!),
       })
 
       response.status(200)
