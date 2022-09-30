@@ -69,11 +69,24 @@ export default class AsaasService {
         return response
       },
       (error) => {
+        console.log(error)
         Event.emit('proxies:response:error', {
           tag: 'axios.response.error',
           info: `${error}`,
           created_at: DateTime.now().toISO(),
         })
+
+        if (error.response) {
+          Event.emit('proxies:response', {
+            type: 'response',
+            method: error.response.config.method,
+            url: error.response.config.url,
+            body: error.response.data,
+            headers: error.response.headers,
+            status: error.response.status,
+            created_at: DateTime.now().toISO(),
+          })
+        }
 
         throw error
       }
