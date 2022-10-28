@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.string('event')
-      table.text('paylod')
+      table.text('payload')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

@@ -22,6 +22,8 @@ export default class WebhooksController {
       case 'PAYMENT_UPDATED':
       case 'PAYMENT_CONFIRMED':
       case 'PAYMENT_RECEIVED':
+        await this.notifyPaymentReceived(request.input('payment'))
+        break
       case 'PAYMENT_OVERDUE':
       case 'PAYMENT_DELETED':
       case 'PAYMENT_RESTORED':
@@ -54,23 +56,37 @@ export default class WebhooksController {
     return
   }
 
+  private async notifyPaymentReceived(data: PaymentWebhook) {
+    const payment = await Payment.findBy('reference', data.id)
+
+    if (!payment) return
+
+    const { default: GomoovService } = await import('App/Services/GomoovService')
+
+    const gomoovService = new GomoovService()
+
+    try {
+      await gomoovService.notify(payment)
+    } catch (error) {
+      throw error
+    }
+  }
+
   private async handlePayment(data: PaymentWebhook) {
     const payment = await Payment.findBy('reference', data.id)
 
-    if (payment) {
-      payment.status = data.status
-      await payment.save()
-      return
-    }
+    if (!payment) return
+
+    payment.status = data.status
+    await payment.save()
   }
 
   private async handleTransfer(data: TransferWebhook) {
     const transfer = await Transfer.findBy('reference', data.id)
 
-    if (transfer) {
-      transfer.status = data.status
-      await transfer.save()
-      return
-    }
+    if (!transfer) return
+
+    transfer.status = data.status
+    await transfer.save()
   }
 }
