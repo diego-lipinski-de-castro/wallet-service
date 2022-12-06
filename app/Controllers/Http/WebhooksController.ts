@@ -67,6 +67,9 @@ export default class WebhooksController {
 
     try {
       await gomoovService.notify(payment)
+
+      payment.status = data.status
+      await payment.save()
     } catch (error) {
       // throw error
     }
