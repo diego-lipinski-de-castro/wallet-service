@@ -84,9 +84,9 @@ export default class GomoovService {
         url: `payments/updatePendingTransaction/${payment.uuid}`,
       })
 
-      return response.data
+      // return response.data
     } catch (error) {
-      throw error
+      // throw error
     }
   }
 }
