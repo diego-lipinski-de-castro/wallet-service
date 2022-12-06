@@ -79,7 +79,7 @@ export default class GomoovService {
 
   public async notify(payment: Payment): Promise<any> {
     try {
-      const response = await this.http({
+      await this.http({
         method: 'PUT',
         url: `payments/updatePendingTransaction/${payment.uuid}`,
       })
