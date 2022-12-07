@@ -21,7 +21,10 @@ export default class WebhooksController {
       case 'PAYMENT_CREATED':
       case 'PAYMENT_UPDATED':
       case 'PAYMENT_CONFIRMED':
+        await this.handlePayment(request.input('payment'))
+        break
       case 'PAYMENT_RECEIVED':
+        await this.handlePayment(request.input('payment'))
         await this.notifyPaymentReceived(request.input('payment'))
         break
       case 'PAYMENT_OVERDUE':
@@ -67,9 +70,6 @@ export default class WebhooksController {
 
     try {
       await gomoovService.notify(payment)
-
-      payment.status = data.status
-      await payment.save()
     } catch (error) {
       // throw error
     }
