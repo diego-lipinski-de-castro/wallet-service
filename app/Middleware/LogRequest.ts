@@ -3,11 +3,21 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
 
 export default class LogRequest {
+  private logBlacklist: Array<String> = ['creditCardCcv']
+
   public async handle({ request }: HttpContextContract, next: () => Promise<void>) {
+    const json = request.toJSON()
+
+    for (const property of this.logBlacklist) {
+      if (json.body.hasOwnProperty(property)) {
+        delete json.body[`${property}`]
+      }
+    }
+
     await Database.insertQuery().table('requests').insert({
       method: request.method(),
       url: request.url(),
-      json: request.toJSON(),
+      json: json,
       created_at: DateTime.now().toISO(),
     })
 

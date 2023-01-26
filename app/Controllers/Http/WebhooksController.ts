@@ -69,7 +69,7 @@ export default class WebhooksController {
     const gomoovService = new GomoovService()
 
     try {
-      await gomoovService.notify(payment)
+      gomoovService.notify(payment)
     } catch (error) {
       // throw error
     }

@@ -20,6 +20,8 @@ import { CreateCardResponse } from 'App/Interfaces/ICreateCardResponse'
 export default class AsaasService {
   private http: AxiosInstance
 
+  private logBlacklist: Array<String> = ['api/v3/creditCard/tokenizeCreditCard']
+
   constructor() {
     this.http = axios.create({
       baseURL: Env.get('ASAAS_URL'),
@@ -31,15 +33,17 @@ export default class AsaasService {
 
     this.http.interceptors.request.use(
       (config) => {
-        Event.emit('proxies:request', {
-          type: 'request',
-          method: config.method,
-          url: config.url,
-          body: config.data,
-          headers: config.headers,
-          status: null,
-          created_at: DateTime.now().toISO(),
-        })
+        if (!this.logBlacklist.includes(config.url ?? '')) {
+          Event.emit('proxies:request', {
+            type: 'request',
+            method: config.method,
+            url: config.url,
+            body: config.data,
+            headers: config.headers,
+            status: null,
+            created_at: DateTime.now().toISO(),
+          })
+        }
 
         return config
       },
