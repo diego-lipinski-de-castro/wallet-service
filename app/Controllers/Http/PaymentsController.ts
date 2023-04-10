@@ -122,6 +122,7 @@ export default class PaymentsController {
     try {
       const result = await asaasService.createCardPayment({
         ...payload,
+        dueDate: payload.dueDate.toFormat('yyyy-MM-dd'),
         customer: customer.reference,
         creditCardToken: card.token,
       })

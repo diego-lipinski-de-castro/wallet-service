@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 export enum BillingTypeEnum {
   CREDIT_CARD = 'CREDIT_CARD',
 }
@@ -14,7 +12,7 @@ export interface CreateCardPayment {
   customer: string
   billingType: BillingTypeEnum
   value: number
-  dueDate: DateTime
+  dueDate: String
   description?: string
   externalReference?: string
   installmentCount?: number
