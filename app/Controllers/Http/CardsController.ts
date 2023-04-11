@@ -12,7 +12,7 @@ export default class CardsController {
       creditCardNumber: schema.string(),
       creditCardExpiryMonth: schema.string(),
       creditCardExpiryYear: schema.string(),
-      creditCardCcv: schema.string(),
+      creditCardCvv: schema.string(),
     })
 
     const payload = await request.validate({ schema: createCardSchema })
@@ -64,6 +64,7 @@ export default class CardsController {
     try {
       const result = await asaasService.tokenizeCard({
         ...payload,
+        creditCardCvv: payload.creditCardCvv,
         customer: customer.reference,
       })
 
