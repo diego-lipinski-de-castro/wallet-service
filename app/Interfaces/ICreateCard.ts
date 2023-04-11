@@ -4,5 +4,5 @@ export interface CreateCard {
   creditCardNumber: string
   creditCardExpiryMonth: string
   creditCardExpiryYear: string
-  creditCardCvv: string
+  creditCardCcv: string
 }

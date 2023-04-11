@@ -6,7 +6,7 @@ export default class LogRequest {
   private logBodyBlacklist: Array<String> = ['creditCardCcv']
 
   public async handle({ request }: HttpContextContract, next: () => Promise<void>) {
-    const json = request.toJSON()
+    const json = JSON.parse(JSON.stringify(request.toJSON()))
 
     for (const property of this.logBodyBlacklist) {
       if (json.body.hasOwnProperty(property)) {
